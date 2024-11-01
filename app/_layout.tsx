@@ -4,7 +4,14 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { vars } from "nativewind";
 import { memo, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+import {
+  createNotificationChannel,
+  requestNotificationPermissions,
+  setNotificationRules,
+} from "@/app/lib/utils";
+import { StatusBar } from "expo-status-bar";
+import * as NavigationBar from "expo-navigation-bar";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -33,6 +40,10 @@ export default memo(function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      requestNotificationPermissions();
+      createNotificationChannel;
+      setNotificationRules();
+      NavigationBar.setBackgroundColorAsync("#f1f5f9");
     }
   }, [loaded]);
 
@@ -43,14 +54,10 @@ export default memo(function RootLayout() {
   return <RootLayoutNav />;
 });
 
-const theme = vars({
-  "--theme-fg": "black",
-  "--theme-bg": "rgba(230,230,230,1)",
-});
-
 function RootLayoutNav() {
   return (
-    <View style={[theme, StyleSheet.absoluteFill]}>
+    <View className={"w-full h-full"}>
+      <StatusBar style="dark" />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />

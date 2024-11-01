@@ -1,7 +1,7 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Feather } from "@expo/vector-icons";
-import { Link, Tabs } from "expo-router";
-import { Pressable, useColorScheme } from "react-native";
+import { Stack } from "expo-router";
+import { useColorScheme } from "react-native";
+
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -16,41 +16,41 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Stack
     // screenOptions={{
     //   tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
     // }}
     >
-      <Tabs.Screen
+      <Stack.Screen
         name="index"
-        options={{
-          title: "Tab One",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <Feather
-                    name="info"
-                    size={25}
-                    color={"black"}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
+        options={{ title: "Remindy" }}
+
+        // options={{
+        //   title: "Remindy",
+        //   tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+        //   headerRight: () => (
+        //     <Link href="/modal" asChild>
+        //       <Pressable>
+        //         {({ pressed }) => (
+        //           <Feather
+        //             name="info"
+        //             size={25}
+        //             color={"black"}
+        //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+        //           />
+        //         )}
+        //       </Pressable>
+        //     </Link>
+        //   ),
+        // }}
       />
-      <Tabs.Screen
+      <Stack.Screen
         name="two"
         options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="settings" color={color} />
-          ),
+          title: "Create Notification",
+          // tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
         }}
       />
-    </Tabs>
+    </Stack>
   );
 }

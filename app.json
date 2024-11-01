@@ -25,7 +25,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "remindy.com"
     },
     "web": {
       "bundler": "metro",
@@ -40,7 +41,37 @@
           "initialOrientation": "DEFAULT"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification_icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/sounds/notification_sound.wav"
+          ],
+          "mode": "production",
+          "android": {
+            "importance": "max",
+            "priority": "max",
+            "useNextForegroundAction": true
+          },
+          "ios": {
+            "critical": true,
+            "timeSensitive": true,
+            "infoPlist": {
+              "UIBackgroundModes": ["fetch", "remote-notification"],
+              "NSUserTrackingUsageDescription": "Your custom message here",
+              "UIUserNotificationSettings": {
+                "alert": true,
+                "badge": true,
+                "sound": true,
+                "criticalAlert": true
+              }
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true,

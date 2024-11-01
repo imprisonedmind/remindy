@@ -4,3 +4,5 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export const NOTIFICATIONS_STORAGE_KEY = '@notifications';
