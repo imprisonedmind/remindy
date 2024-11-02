@@ -2,7 +2,7 @@
 I couldn't find a way to set hourly reminders on any of my native tools or calendars, 
 so I built this.
 
-<img src="https://i.imgur.com/hfVmhsb.png" alt="Image" width="350"/>
+<img src="https://i.imgur.com/LIdLnYc.png" alt="Image"/>
 
 
 # Getting Started
