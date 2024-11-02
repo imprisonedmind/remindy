@@ -17,42 +17,78 @@ export const setNotificationRules = () => {
       shouldShowAlert: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
-      priority: Notifications.AndroidNotificationPriority.MAX,
+      priority: Notifications.AndroidNotificationPriority.HIGH,
     }),
   });
 };
 
 // Request permissions including critical alerts
 export async function requestNotificationPermissions() {
-  const { status } = await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-      allowAnnouncements: true,
-      allowCriticalAlerts: true,
-      provideAppNotificationSettings: true,
-    },
-    android: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-      allowAnnouncements: true,
-    },
-  });
-  return status;
+  try {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync({
+        ios: {
+          allowAlert: true,
+          allowBadge: true,
+          allowSound: true,
+          allowAnnouncements: true,
+        },
+        android: {
+          allowAlert: true,
+          allowBadge: true,
+          allowSound: true,
+        },
+      });
+      finalStatus = status;
+    }
+
+    if (finalStatus !== "granted") {
+      throw new Error("Permission not granted!");
+    }
+
+    // Get the token
+    const token = await Notifications.getExpoPushTokenAsync({
+      projectId: "31374dfa-ee6d-4865-adb6-300af5056f71", // Your project ID from app.json
+    });
+    console.log("Push token:", token);
+  } catch (error) {
+    console.error("Error requesting notification permissions:", error);
+  }
 }
 
+// setup notification channel on android
 export async function createNotificationChannel() {
   if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("high-priority", {
-      name: "High Priority Notifications",
-      importance: Notifications.AndroidImportance.HIGH,
-      sound: "notification_sound", // You can specify a custom sound if needed
-      bypassDnd: true, // Bypass Do Not Disturb
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
+    try {
+      // First, delete any existing channel with this ID
+      await Notifications.deleteNotificationChannelAsync("high-priority");
+
+      // Create the channel
+      await Notifications.setNotificationChannelAsync("high-priority", {
+        name: "High Priority Notifications",
+        description: "This channel is used for important notifications.", // Android requires this
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        enableVibrate: true,
+        enableLights: true,
+        lightColor: "#FF231F7C",
+        lockscreenVisibility:
+          Notifications.AndroidNotificationVisibility.PUBLIC,
+        bypassDnd: true,
+        sound: "notification_sound.wav",
+      });
+
+      // Verify channel creation
+      const channel =
+        await Notifications.getNotificationChannelAsync("high-priority");
+      console.log("Created channel:", channel);
+    } catch (error) {
+      console.error("Error creating notification channel:", error);
+    }
   }
 }
 
@@ -102,11 +138,13 @@ export const scheduleNotification = async (reminder: {
       content: {
         title: reminder.title,
         body: reminder.description,
-        priority: Notifications.AndroidNotificationPriority.MAX,
+        sound: true,
+        priority: Notifications.AndroidNotificationPriority.HIGH,
       },
       trigger: {
         seconds: secondsUntilTrigger,
         repeats: true,
+        channelId: "high-priority",
       },
       identifier: reminder.id,
     });
@@ -117,3 +155,37 @@ export const scheduleNotification = async (reminder: {
     throw error;
   }
 };
+
+// Add this function to check if notifications are working
+export async function checkNotificationPermissions() {
+  const settings = await Notifications.getPermissionsAsync();
+  console.log("Notification settings:", settings);
+
+  const channels = await Notifications.getNotificationChannelsAsync();
+  console.log("Available channels:", channels);
+}
+
+export async function testNotification() {
+  try {
+    // Make sure channel exists first
+    await createNotificationChannel();
+
+    const notification = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Test Notification",
+        body: "Testing sound...",
+        data: { data: "goes here" },
+        sound: "notification_sound.wav",
+        priority: "max",
+      },
+      trigger: {
+        seconds: 2,
+        channelId: "high-priority", // Specify the channel ID
+      },
+    });
+
+    console.log("Scheduled notification:", notification);
+  } catch (error) {
+    console.error("Error scheduling notification:", error);
+  }
+}

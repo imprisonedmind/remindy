@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
-import { Stack } from "expo-router";
-import { useColorScheme } from "react-native";
+import { Link, Stack } from "expo-router";
+import { Pressable, useColorScheme } from "react-native";
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -23,26 +23,24 @@ export default function TabLayout() {
     >
       <Stack.Screen
         name="index"
-        options={{ title: "Remindy" }}
-
-        // options={{
-        //   title: "Remindy",
-        //   tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        //   headerRight: () => (
-        //     <Link href="/modal" asChild>
-        //       <Pressable>
-        //         {({ pressed }) => (
-        //           <Feather
-        //             name="info"
-        //             size={25}
-        //             color={"black"}
-        //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-        //           />
-        //         )}
-        //       </Pressable>
-        //     </Link>
-        //   ),
-        // }}
+        options={{
+          title: "Remindy",
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          headerRight: () => (
+            <Link href="/modal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <Feather
+                    name="info"
+                    size={25}
+                    color={"black"}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
       />
       <Stack.Screen
         name="two"

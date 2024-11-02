@@ -77,42 +77,44 @@ export default function CreateNotificationScreen() {
 
   return (
     <View className="flex-1 bg-neutral-100 p-4">
-      <View className="bg-white rounded-lg p-4 space-y-4">
-        <TextInput
-          className="border border-gray-300 p-2 rounded"
-          placeholder="Reminder Title"
-          value={title}
-          onChangeText={setTitle}
-        />
+      <View className="gap-6 bg-white rounded-xl p-4 border border-neutral-200">
+        <View className={"flex-col gap-2"}>
+          <TextInput
+            className="border border-gray-300 p-2 rounded"
+            placeholder="Reminder Title"
+            value={title}
+            onChangeText={setTitle}
+          />
 
-        <TextInput
-          className="border border-gray-300 p-2 rounded"
-          placeholder="Description"
-          value={description}
-          onChangeText={setDescription}
-          multiline
-        />
+          <TextInput
+            className="border border-gray-300 p-2 rounded"
+            placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
+            multiline
+          />
 
-        <View className="border border-gray-300 rounded">
-          <Picker selectedValue={interval} onValueChange={setInterval}>
-            <Picker.Item
-              key="test"
-              label="Every 30 seconds (Testing)"
-              value="0.00833"
-            />
-            {[1, 2, 3, 4, 6, 8, 12, 24].map((hours) => (
+          <View className="border border-gray-300 rounded">
+            <Picker selectedValue={interval} onValueChange={setInterval}>
               <Picker.Item
-                key={hours}
-                label={hours > 1 ? `Every ${hours} hours` : "Every hour"}
-                value={hours.toString()}
+                key="test"
+                label="Every 30 seconds (Testing)"
+                value="0.00833"
               />
-            ))}
-          </Picker>
+              {[1, 2, 3, 4, 6, 8, 12, 24].map((hours) => (
+                <Picker.Item
+                  key={hours}
+                  label={hours > 1 ? `Every ${hours} hours` : "Every hour"}
+                  value={hours.toString()}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
 
         <TouchableOpacity
           onPress={handleSaveNotification}
-          className="bg-blue-500 p-4 rounded"
+          className="bg-blue-500 p-4 rounded-lg"
         >
           <Text className="text-white text-center font-bold">
             Save Reminder

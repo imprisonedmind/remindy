@@ -6,6 +6,7 @@ import { vars } from "nativewind";
 import { memo, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import {
+  checkNotificationPermissions,
   createNotificationChannel,
   requestNotificationPermissions,
   setNotificationRules,
@@ -41,9 +42,11 @@ export default memo(function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
       requestNotificationPermissions();
-      createNotificationChannel;
       setNotificationRules();
-      NavigationBar.setBackgroundColorAsync("#f1f5f9");
+      createNotificationChannel;
+      NavigationBar.setBackgroundColorAsync("#f5f5f5");
+      // Call this when your app starts
+      checkNotificationPermissions();
     }
   }, [loaded]);
 

@@ -1,66 +1,32 @@
 import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { cn, NOTIFICATIONS_STORAGE_KEY } from "@/lib/utils";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { cn, deleteNotification, loadNotifications } from "@/lib/utils";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { router, useSegments } from "expo-router";
 import { NotificationData } from "@/lib/types";
-import * as Notifications from "expo-notifications";
 import { NotificationCountdown } from "@/components/countDownTimer";
 import { formatDuration, getIntervalInMs } from "@/app/lib/utils";
 
 export default function TabOneScreen() {
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
+  const loadLocalNotifications = async () => {
+    let localNotifications = await loadNotifications();
+    // TODO: dont use !!
+    setNotifications(localNotifications);
+  };
+
   // Load saved notifications when the component mounts
   useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        const savedNotifications = await AsyncStorage.getItem(
-          NOTIFICATIONS_STORAGE_KEY,
-        );
-        const parsedNotifications = savedNotifications
-          ? JSON.parse(savedNotifications)
-          : [];
-
-        setNotifications(parsedNotifications);
-      } catch (error) {
-        console.error("Error loading notifications:", error);
-      }
-    };
-
-    loadNotifications();
+    loadLocalNotifications();
   }, [useSegments()]);
 
-  // delete specific notification
-  const deleteNotification = async (id: string) => {
-    try {
-      const notificationToDelete = notifications.find(
-        (notification) => notification.id === id,
-      );
-
-      if (notificationToDelete?.notificationId) {
-        // Cancel the scheduled notification using its ID
-        await Notifications.cancelScheduledNotificationAsync(
-          notificationToDelete.notificationId,
-        );
-      }
-
-      // Remove it from the state and storage
-      const updatedNotifications = notifications.filter(
-        (notification) => notification.id !== id,
-      );
-
-      setNotifications(updatedNotifications);
-      await AsyncStorage.setItem(
-        NOTIFICATIONS_STORAGE_KEY,
-        JSON.stringify(updatedNotifications),
-      );
-
-      Alert.alert("Success", "Reminder deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-      Alert.alert("Error", "Failed to delete reminder.");
-    }
+  const handleDelete = async (id: string) => {
+    let localNotifications = await deleteNotification({
+      id: id,
+      notifications,
+    });
+    // TODO: dont use !!
+    setNotifications(localNotifications!);
   };
 
   return (
@@ -72,19 +38,25 @@ export default function TabOneScreen() {
       <FlatList
         data={notifications}
         renderItem={({ item }: { item: NotificationData }) => (
-          <View className="bg-white my-2 p-4 rounded-lg">
-            <Text className="font-bold text-lg">{item.title}</Text>
-            <Text className="text-gray-600">{item.description}</Text>
-            <Text className="text-gray-500">
-              Repeats every
-              {formatDuration(getIntervalInMs(parseInt(item.interval)))}
-            </Text>
-            <NotificationCountdown
-              interval={parseInt(item.interval)}
-              createdAt={parseInt(item.createdAt)}
-            />
+          <View className="bg-white my-2 p-4 rounded-lg border border-neutral-200 gap-4">
+            <View className={"gap-2"}>
+              <View>
+                <Text className="font-bold text-lg">{item.title}</Text>
+                <Text className="text-gray-600">{item.description}</Text>
+              </View>
+              <View>
+                <Text className="text-gray-500">
+                  Repeats every
+                  {formatDuration(getIntervalInMs(parseInt(item.interval)))}
+                </Text>
+                <NotificationCountdown
+                  interval={parseInt(item.interval)}
+                  createdAt={parseInt(item.createdAt)}
+                />
+              </View>
+            </View>
             <TouchableOpacity
-              onPress={() => deleteNotification(item.id)}
+              onPress={() => handleDelete(item.id)}
               className="bg-red-500 p-2 rounded mt-2"
             >
               <Text className="text-white text-center">Delete</Text>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "nativewind-expo-router",
-    "slug": "nativewind-expo-router",
+    "name": "Remindy",
+    "slug": "Remindy - Push Notifications",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -18,7 +18,8 @@
     "ios": {
       "supportsTablet": true,
       "userInterfaceStyle": "automatic",
-      "requireFullScreen": true
+      "requireFullScreen": true,
+      "bundleIdentifier": "remindy.com"
     },
     "android": {
       "userInterfaceStyle": "automatic",
@@ -45,22 +46,31 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/notification_icon.png",
+          "icon": "assets/images/notification_icon.png",
           "color": "#ffffff",
           "sounds": [
-            "./assets/sounds/notification_sound.wav"
+            "assets/sounds/notification_sound.wav"
           ],
           "mode": "production",
           "android": {
             "importance": "max",
             "priority": "max",
-            "useNextForegroundAction": true
+            "useNextForegroundAction": true,
+            "icon": "./assets/images/notification_icon.png",
+            "color": "#ffffff",
+            "sounds": [
+              "assets/sounds/notification_sound.wav"
+            ],
+            "channelId": "high-priority"
           },
           "ios": {
             "critical": true,
             "timeSensitive": true,
             "infoPlist": {
-              "UIBackgroundModes": ["fetch", "remote-notification"],
+              "UIBackgroundModes": [
+                "fetch",
+                "remote-notification"
+              ],
               "NSUserTrackingUsageDescription": "Your custom message here",
               "UIUserNotificationSettings": {
                 "alert": true,
